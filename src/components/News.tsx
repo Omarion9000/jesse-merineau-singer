@@ -1,5 +1,61 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, ArrowRight } from 'lucide-react';
+
+type NewsItem = {
+  id: number;
+  title: string;
+  date: string;
+  image: string;
+  excerpt: string;
+  content: string;
+  author: string;
+  readMoreLink: string;
+};
+
+const NewsCard: React.FC<{ item: NewsItem }> = ({ item }) => {
+  const [imageFailed, setImageFailed] = useState(!item.image);
+  const showImage = !imageFailed;
+
+  return (
+    <article className="bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className={showImage ? 'grid md:grid-cols-2 gap-8' : ''}>
+        {showImage && (
+          <div className="relative h-full min-h-[300px]">
+            <img
+              src={item.image}
+              alt={item.title}
+              onError={() => setImageFailed(true)}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        )}
+        <div className={showImage ? 'p-8' : 'max-w-3xl mx-auto p-6 sm:p-10'}>
+          <div className="flex items-center text-gray-500 mb-4">
+            <Calendar className="h-5 w-5 mr-2" />
+            <span>{item.date}</span>
+          </div>
+          <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
+          <p className="text-gray-600 mb-4">{item.excerpt}</p>
+          <div className="prose max-w-none text-gray-600 mb-6">
+            <p>{item.content}</p>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-500 italic">By {item.author}</span>
+            <a
+              href={item.readMoreLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-purple-600 font-semibold flex items-center space-x-2 hover:text-purple-700 transition-colors"
+            >
+              <span>Read More</span>
+              <ArrowRight className="h-5 w-5" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+};
 
 const news = [
   {
@@ -52,40 +108,7 @@ const News = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-12">
             {news.map((item) => (
-              <div key={item.id} className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="relative h-full min-h-[300px]">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-8">
-                    <div className="flex items-center text-gray-500 mb-4">
-                      <Calendar className="h-5 w-5 mr-2" />
-                      <span>{item.date}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4">{item.title}</h3>
-                    <p className="text-gray-600 mb-4">{item.excerpt}</p>
-                    <div className="prose max-w-none text-gray-600 mb-6">
-                      <p>{item.content}</p>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-500 italic">By {item.author}</span>
-                      <a
-                        href={item.readMoreLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-purple-600 font-semibold flex items-center space-x-2 hover:text-purple-700 transition-colors"
-                      >
-                        <span>Read More</span>
-                        <ArrowRight className="h-5 w-5" />
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <NewsCard key={item.id} item={item} />
             ))}
           </div>
         </div>
